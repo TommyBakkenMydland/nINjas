@@ -30,7 +30,7 @@ if (len(tags_result_local.tags) == 0):
 matches = []
 
 for tag in tags_result_local.tags:
-    if tag.name in ingredients and tag.confidence > .6:
+    if tag.confidence > .6:
         matches.append(tag.name)
 print()
 print("ingredients in the picture: ")
