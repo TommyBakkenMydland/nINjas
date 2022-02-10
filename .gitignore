@@ -333,3 +333,4 @@ ASALocalRun/
 .mfractor/
 .terraform/
 *config.json
+*python/image.jpg
