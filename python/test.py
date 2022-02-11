@@ -2,8 +2,6 @@ import time
 import pyfirmata
 import StepperLib
 import time
-import datetime
-import imageprocessor
 
 #'COM3' is the USB port mine was plugged into
 board = pyfirmata.Arduino("/dev/ttyACM0") # remember to go to arduino ide, examples, firmata, standard firmata
