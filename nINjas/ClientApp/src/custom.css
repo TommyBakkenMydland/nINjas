@@ -12,3 +12,18 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: center;
+}
+.logoNav {
+  height: 50px;
+  width: 50px;
+}
+.logo{
+  height: 100%;
+  width: 100%;
+}

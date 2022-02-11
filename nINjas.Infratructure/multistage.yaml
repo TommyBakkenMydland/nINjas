@@ -1,0 +1,124 @@
+name: $(BuildDefinitionName)_$(Build.SourceBranchName)_$(Date:yyyy-MM-dd).$(BuildID)
+
+trigger:
+  branches:
+    include:
+      - develop
+      - master
+
+variables:
+  FolderName: 'nINjas.Infrastructure'
+  DotnetVersion: '6.0.x'
+  IncludePreviewVersions: false
+  Subscription: 'nINjas-magic-refrigerator'
+  Environment: 'dev'
+  PulumiArgs: '--yes --refresh --skip-preview --non-interactive'
+  PulumiVersion: 'latest'
+  StackName: 'nINjas.Infrastructure'
+  SourceFolder: 'nINjas'
+  WebAppName: 'nINjas'
+
+steps:
+- task: CopyFiles@2
+  displayName: Copy artifacts
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.FolderName }}'
+    contents: |
+      **
+      !.vsts-ci.yml
+      !**/.git/**
+      !**/.terraform/**
+      !**/azuredevops/**
+      !.gitignore
+      !**/.vscode/**
+      !**/.vs/**
+      !**/src/**
+    targetFolder: $(Build.ArtifactStagingDirectory)/pulumi_artifact
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk ${{ parameters.DotnetVersion }}'
+  inputs:
+    packageType: sdk
+    version: ${{ parameters.DotnetVersion }}
+    includePreviewVersions: ${{ parameters.IncludePreviewVersions }}
+
+# PULUMI MAGIC
+
+- task: DotNetCoreCLI@2
+  displayName: Build pulumi
+  inputs:
+    command: build
+    projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
+    arguments: '--configuration Debug --no-restore'
+
+- task: Pulumi@1
+  displayName: 'Pulumi preview'
+  inputs:
+    azureSubscription: '${{ parameters.Subscription }}-${{ parameters.Environment }}'
+    command: 'preview'
+    cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
+    stack: 'innovationnorway/${{ parameters.StackName }}/${{ parameters.Environment }}'
+    args: '${{ parameters.PulumiArgs }}'
+    versionSpec: '${{ parameters.PulumiVersion }}'
+    
+- task: Pulumi@1
+  inputs:
+    azureSubscription: '${{ parameters.Subscription }}-${{ parameters.Environment }}'
+    command: 'up'
+    args: '${{ parameters.PulumiArgs }}'
+    cwd: '$(Pipeline.Workspace)/nINjasInfrastructure'
+    stack: 'innovationnorway/${{ parameters.StackName }}/${{ parameters.Environment }}'
+
+# WEB APP BUILD
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '${{ parameters.SourceFolder }}/**/*.csproj'
+    feedsToUse: 'config'
+    nugetConfigPath: '${{ parameters.SourceFolder }}/nuget.config'
+    externalFeedCredentials: 'InnovationNorway MyGet Private Feed - Download'
+
+- task: DotNetCoreCLI@2
+  displayName: Build api
+  inputs:
+    command: build
+    projects: '${{ parameters.SourceFolder }}/**/${{ parameters.WebAppName }}.csproj'
+    arguments: '--configuration $(BuildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: Build Client
+  inputs:
+    command: build
+    projects: '${{ parameters.SourceFolder }}/**/${{ parameters.WebAppName }}.Client.csproj'
+    arguments: '--configuration $(BuildConfiguration) --no-restore'
+
+# Deploy it and pray
+
+- task: DotNetCoreCLI@2
+  displayName: Creating publish zip of web api
+  inputs:
+    command: publish
+    publishWebProjects: false
+    arguments: '--no-restore --configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/project"'
+    zipAfterPublish: True
+    projects: '${{ parameters.SourceFolder }}/${{ parameters.WebAppName }}/${{ parameters.WebAppName }}.csproj'
+    workingDirectory: '${{ parameters.SourceFolder }}'
+
+- task: CopyFiles@2
+  displayName: 'Copy client to output directory'
+  condition: eq(variables['System.PullRequest.PullRequestId'], '') # Check if build is PR or merge
+  inputs:
+    sourceFolder: '${{ parameters.SourceFolder }}/${{ parameters.WebAppName }}.Client/bin/$(BuildConfiguration)/'
+    contents: '*nupkg'
+    targetFolder: $(build.artifactstagingdirectory)/client
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact for web api'
+  condition: eq(variables['System.PullRequest.PullRequestId'], '') # Check if build is PR or merge
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)/project'
+    ArtifactName: 'api'
+    publishLocation: Container
+
+  
