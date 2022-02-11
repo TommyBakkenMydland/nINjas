@@ -33,7 +33,7 @@ for tag in tags_result_local.tags:
     if tag.name in ingredients and tag.confidence > .6:
         matches.append(tag.name)
 print()
-print("ingredients in the picture: ")
+print("Ingredients in the picture: ")
 for match in matches:
     print(match)
 
