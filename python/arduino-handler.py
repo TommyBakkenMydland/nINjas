@@ -3,6 +3,8 @@ import pyfirmata
 import StepperLib
 import time
 import datetime
+import imageprocessor
+
 #'COM3' is the USB port mine was plugged into
 board = pyfirmata.Arduino("/dev/ttyACM0") # remember to go to arduino ide, examples, firmata, standard firmata
 reader = pyfirmata.util.Iterator(board)
@@ -34,13 +36,11 @@ if __name__ == '__main__':
         if index > 9:
             index = 0
 
-        # Get button current state
         button_state = button.read()
         button_states[index] = button_state
         
-        # Check if button has been released
         if button_pressed_at < time.time() - 5 and button_state == 0 and all(state == 0 for state in button_states):
-            # and power on next LED
+            imageprocessor.AnalyseImage()
             print("press")
             button_pressed_at = time.time()
             for i in range(0, len(button_states)):
