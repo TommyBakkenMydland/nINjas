@@ -16,24 +16,25 @@ if __name__ == '__main__':
     board = pyfirmata.Arduino("/dev/ttyACM0")
     print("Communication Successfully started")
     
-    # Create bunch of useful variables
-    button = board.digital[2]
-    
+    button = board.digital[2] 
+    LED =board.digital[13]
+    button_states = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1] 
     button_pressed_at = time.time()
     # Start iterator to receive input data
     it = pyfirmata.util.Iterator(board)
     it.start()
     button.mode = pyfirmata.INPUT
+    index = 0    
     motor = StepperLib.Stepper(2038, board, reader, 8, 9, 10, 11)
     motor.set_speed(5)
 
     while True:
         motor.step(5)
         time.sleep(0.01)
-
-        button_state = button.read()
         
-        if button_pressed_at < time.time() - 1 and button_state == 1:
-            imageprocessor.AnalyseImage()
-            print("press")
-            button_pressed_at = time.time()
+        if index > 9:
+            index = 0
+
+       
+        LED.write(button.read())
+       
