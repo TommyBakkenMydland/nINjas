@@ -42,6 +42,13 @@ steps:
     version: ${{ variables.DotnetVersion }}
     includePreviewVersions: ${{ variables.IncludePreviewVersions }}
 
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dotnet'
+  inputs:
+    command: 'restore'
+    projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
+    feedsToUse: 'config'
+    
 # PULUMI MAGIC
 
 - task: DotNetCoreCLI@2
@@ -50,13 +57,6 @@ steps:
     command: build
     projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
     arguments: '--configuration Debug --no-restore'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Restore dotnet'
-  inputs:
-    command: 'restore'
-    projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
-    feedsToUse: 'config'
 
 - task: Pulumi@1
   displayName: 'Pulumi preview'
