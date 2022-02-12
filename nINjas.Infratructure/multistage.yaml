@@ -8,7 +8,7 @@ trigger:
 
 variables:
   FolderName: 'nINjas.Infrastructure'
-  DotnetVersion: '6.0.x'
+  DotnetVersion: '3.1.x'
   IncludePreviewVersions: false
   Subscription: 'nINjas-magic-refrigerator'
   Environment: 'dev'
@@ -35,6 +35,20 @@ steps:
       !**/src/**
     targetFolder: $(Build.ArtifactStagingDirectory)/pulumi_artifact
 
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk ${{ variables.DotnetVersion }}'
+  inputs:
+    packageType: sdk
+    version: ${{ variables.DotnetVersion }}
+    includePreviewVersions: ${{ variables.IncludePreviewVersions }}
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dotnet'
+  inputs:
+    command: 'restore'
+    projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
+    feedsToUse: 'config'
+    
 # PULUMI MAGIC
 
 - task: DotNetCoreCLI@2
