@@ -22,7 +22,7 @@ steps:
 - task: CopyFiles@2
   displayName: Copy artifacts
   inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.FolderName }}'
+    SourceFolder: '$(System.DefaultWorkingDirectory)/${{ variables.FolderName }}'
     contents: |
       **
       !.vsts-ci.yml
@@ -36,11 +36,11 @@ steps:
     targetFolder: $(Build.ArtifactStagingDirectory)/pulumi_artifact
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk ${{ parameters.DotnetVersion }}'
+  displayName: 'Use .NET Core sdk ${{ variables.DotnetVersion }}'
   inputs:
     packageType: sdk
-    version: ${{ parameters.DotnetVersion }}
-    includePreviewVersions: ${{ parameters.IncludePreviewVersions }}
+    version: ${{ variables.DotnetVersion }}
+    includePreviewVersions: ${{ variables.IncludePreviewVersions }}
 
 # PULUMI MAGIC
 
@@ -54,43 +54,43 @@ steps:
 - task: Pulumi@1
   displayName: 'Pulumi preview'
   inputs:
-    azureSubscription: '${{ parameters.Subscription }}-${{ parameters.Environment }}'
+    azureSubscription: '${{ variables.Subscription }}-${{ variables.Environment }}'
     command: 'preview'
     cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
-    stack: 'innovationnorway/${{ parameters.StackName }}/${{ parameters.Environment }}'
-    args: '${{ parameters.PulumiArgs }}'
-    versionSpec: '${{ parameters.PulumiVersion }}'
+    stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
+    args: '${{ variables.PulumiArgs }}'
+    versionSpec: '${{ variables.PulumiVersion }}'
     
 - task: Pulumi@1
   inputs:
-    azureSubscription: '${{ parameters.Subscription }}-${{ parameters.Environment }}'
+    azureSubscription: '${{ variables.Subscription }}-${{ variables.Environment }}'
     command: 'up'
-    args: '${{ parameters.PulumiArgs }}'
+    args: '${{ variables.PulumiArgs }}'
     cwd: '$(Pipeline.Workspace)/nINjasInfrastructure'
-    stack: 'innovationnorway/${{ parameters.StackName }}/${{ parameters.Environment }}'
+    stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
 
 # WEB APP BUILD
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    projects: '${{ parameters.SourceFolder }}/**/*.csproj'
+    projects: '${{ variables.SourceFolder }}/**/*.csproj'
     feedsToUse: 'config'
-    nugetConfigPath: '${{ parameters.SourceFolder }}/nuget.config'
+    nugetConfigPath: '${{ variables.SourceFolder }}/nuget.config'
     externalFeedCredentials: 'InnovationNorway MyGet Private Feed - Download'
 
 - task: DotNetCoreCLI@2
   displayName: Build api
   inputs:
     command: build
-    projects: '${{ parameters.SourceFolder }}/**/${{ parameters.WebAppName }}.csproj'
+    projects: '${{ variables.SourceFolder }}/**/${{ variables.WebAppName }}.csproj'
     arguments: '--configuration $(BuildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: Build Client
   inputs:
     command: build
-    projects: '${{ parameters.SourceFolder }}/**/${{ parameters.WebAppName }}.Client.csproj'
+    projects: '${{ variables.SourceFolder }}/**/${{ variables.WebAppName }}.Client.csproj'
     arguments: '--configuration $(BuildConfiguration) --no-restore'
 
 # Deploy it and pray
@@ -102,14 +102,14 @@ steps:
     publishWebProjects: false
     arguments: '--no-restore --configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/project"'
     zipAfterPublish: True
-    projects: '${{ parameters.SourceFolder }}/${{ parameters.WebAppName }}/${{ parameters.WebAppName }}.csproj'
-    workingDirectory: '${{ parameters.SourceFolder }}'
+    projects: '${{ variables.SourceFolder }}/${{ variables.WebAppName }}/${{ variables.WebAppName }}.csproj'
+    workingDirectory: '${{ variables.SourceFolder }}'
 
 - task: CopyFiles@2
   displayName: 'Copy client to output directory'
   condition: eq(variables['System.PullRequest.PullRequestId'], '') # Check if build is PR or merge
   inputs:
-    sourceFolder: '${{ parameters.SourceFolder }}/${{ parameters.WebAppName }}.Client/bin/$(BuildConfiguration)/'
+    sourceFolder: '${{ variables.SourceFolder }}/${{ variables.WebAppName }}.Client/bin/$(BuildConfiguration)/'
     contents: '*nupkg'
     targetFolder: $(build.artifactstagingdirectory)/client
 
