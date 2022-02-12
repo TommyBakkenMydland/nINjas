@@ -14,7 +14,7 @@ variables:
   Environment: 'dev'
   PulumiArgs: '--yes --refresh --skip-preview --non-interactive'
   PulumiVersion: 'latest'
-  StackName: 'nINjas.Infrastructure'
+  StackName: 'azure-cs-appservice'
   SourceFolder: 'nINjas'
   WebAppName: 'nINjas'
 
@@ -63,7 +63,7 @@ steps:
     azureSubscription: '${{ variables.Subscription }}'
     command: 'preview'
     cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
-    stack: 'innovationnorway/azure-cs-appservice/${{ variables.Environment }}'
+    stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
     args: '${{ variables.PulumiArgs }}'
     versionSpec: '${{ variables.PulumiVersion }}'
     
