@@ -1,5 +1,3 @@
 name: azure-cs-appservice
 description: Creates Azure App Service
 runtime: dotnet
-template:
-  config:

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nINjas.Infratructure", "nINjas.Infratructure.csproj", "{5ACBEECE-E4FF-42D2-B5B0-BE302FB03847}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nINjas.Infrastructure", "nINjas.Infrastructure.csproj", "{A123DAF4-B03B-438F-B732-ED51B1A9428F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5ACBEECE-E4FF-42D2-B5B0-BE302FB03847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5ACBEECE-E4FF-42D2-B5B0-BE302FB03847}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5ACBEECE-E4FF-42D2-B5B0-BE302FB03847}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5ACBEECE-E4FF-42D2-B5B0-BE302FB03847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A123DAF4-B03B-438F-B732-ED51B1A9428F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A123DAF4-B03B-438F-B732-ED51B1A9428F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A123DAF4-B03B-438F-B732-ED51B1A9428F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A123DAF4-B03B-438F-B732-ED51B1A9428F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7C6DA33B-1A08-4981-BC4F-CAEA561BE2D7}
+		SolutionGuid = {F59585C8-51BB-4DE5-AF98-00D50E3D00D3}
 	EndGlobalSection
 EndGlobal
