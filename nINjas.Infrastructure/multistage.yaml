@@ -63,7 +63,7 @@ steps:
     azureSubscription: '${{ variables.Subscription }}'
     command: 'preview'
     cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
-    stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
+    stack: 'innovationnorway/${{ variables.Environment }}'
     args: '${{ variables.PulumiArgs }}'
     versionSpec: '${{ variables.PulumiVersion }}'
     
