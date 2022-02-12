@@ -57,15 +57,6 @@ steps:
     projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
     arguments: '--configuration Debug --no-restore'
 
-- task: Pulumi@1
-  displayName: 'Pulumi preview'
-  inputs:
-    azureSubscription: '${{ variables.Subscription }}'
-    command: 'preview'
-    cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
-    stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
-    args: '${{ variables.PulumiArgs }}'
-    versionSpec: '${{ variables.PulumiVersion }}'
     
 - task: Pulumi@1
   inputs:
