@@ -44,7 +44,9 @@ export class Home extends Component {
 
     return (
       <div class="center">
-        <img src={logo} alt="Logo" className="logo"/>
+        <picture>
+        <img src={logo} alt="Logo" width="300" height="300"/>
+        </picture>
         {contents}
       </div>
     );
