@@ -54,7 +54,7 @@ steps:
 - task: Pulumi@1
   displayName: 'Pulumi preview'
   inputs:
-    azureSubscription: '${{ variables.Subscription }}-${{ variables.Environment }}'
+    azureSubscription: '${{ variables.Subscription }}'
     command: 'preview'
     cwd: '$(Build.ArtifactStagingDirectory)/pulumi_artifact'
     stack: 'innovationnorway/${{ variables.StackName }}/${{ variables.Environment }}'
@@ -63,7 +63,7 @@ steps:
     
 - task: Pulumi@1
   inputs:
-    azureSubscription: '${{ variables.Subscription }}-${{ variables.Environment }}'
+    azureSubscription: '${{ variables.Subscription }}'
     command: 'up'
     args: '${{ variables.PulumiArgs }}'
     cwd: '$(Pipeline.Workspace)/nINjasInfrastructure'
