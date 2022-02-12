@@ -51,6 +51,13 @@ steps:
     projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
     arguments: '--configuration Debug --no-restore'
 
+- task: DotNetCoreCLI@2
+  displayName: 'Restore dotnet'
+  inputs:
+    command: 'restore'
+    projects: '$(Build.ArtifactStagingDirectory)/pulumi_artifact/**/*.csproj'
+    feedsToUse: 'config'
+
 - task: Pulumi@1
   displayName: 'Pulumi preview'
   inputs:
